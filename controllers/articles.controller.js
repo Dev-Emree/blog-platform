@@ -53,6 +53,37 @@ const loadUsersArticles = async (identifier, type = 'id', lastId = false, limit 
     }
 };
 
+const loadArticle = async (article_id, user) => {
+    try {
+        let query = `
+        SELECT
+            articles.id,
+            articles.title,
+            articles.content,
+            users.username,
+            users.name,
+            users.profile_photo
+        FROM
+            articles
+        JOIN
+            users ON articles.user_id = users.id
+        WHERE
+            articles.id = ? AND
+            users.username = ?
+        `;
+
+        let values = [article_id, user];
+        
+        const article = await QUERY(query, values);
+
+        return article;
+    }catch (error) {
+        console.error('Error fetching article:', error.message);
+        throw new Error('Error fetching article');
+    }
+}
+
 export default {
     loadUsersArticles,
+    loadArticle,
 };
